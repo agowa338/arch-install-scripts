@@ -82,6 +82,7 @@ fi
 
 if (( ! interactive )); then
   pacman_args+=(--noconfirm)
+  pacman_args+=(--noprogressbar)
 fi
 
 if [[ $pacman_config ]]; then
