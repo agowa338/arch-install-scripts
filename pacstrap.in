@@ -15,6 +15,7 @@ m4_include(common)
 hostcache=0
 copykeyring=1
 copymirrorlist=1
+hideprogressbar=1
 
 usage() {
   cat <<EOF
@@ -26,6 +27,7 @@ usage: ${0##*/} [options] root [packages...]
     -G             Avoid copying the host's pacman keyring to the target
     -i             Prompt for package confirmation when needed
     -M             Avoid copying the host's mirrorlist to the target
+    -p             Show progressbar of pacman.
 
     -h             Print this help message
 
@@ -42,7 +44,7 @@ fi
 
 (( EUID == 0 )) || die 'This script must be run with root privileges'
 
-while getopts ':C:cdGiM' flag; do
+while getopts ':C:cdGiMp' flag; do
   case $flag in
     C)
       pacman_config=$OPTARG
@@ -61,6 +63,9 @@ while getopts ':C:cdGiM' flag; do
       ;;
     M)
       copymirrorlist=0
+      ;;
+    p)
+      hideprogressbar=0
       ;;
     :)
       die '%s: option requires an argument -- '\''%s'\' "${0##*/}" "$OPTARG"
@@ -82,6 +87,9 @@ fi
 
 if (( ! interactive )); then
   pacman_args+=(--noconfirm)
+fi
+
+if (( ! hideprogressbar )); then
   pacman_args+=(--noprogressbar)
 fi
 
